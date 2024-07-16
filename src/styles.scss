@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+@use '@triparc/nexus/src/styles-v1' as nex;
+@use '@triparc/nexus/src/styles';
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+@include nex.core();
+
+$theme: nex.create-theme();
+
+@include nex.all-component-themes($theme);

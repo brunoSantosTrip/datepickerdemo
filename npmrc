@@ -1,0 +1,2 @@
+registry=https://pkgs.dev.azure.com/trip-arc/_packaging/trip-arc/npm/registry/
+always-auth=true

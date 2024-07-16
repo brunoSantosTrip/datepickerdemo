@@ -1,0 +1,170 @@
+/*Disable Backdrop css*/
+::ng-deep.cdk-overlay-dark-backdrop {
+  background: none;
+}
+
+mat-list-item {
+  height: 35px;
+}
+
+::ng-deep.cdk-overlay-pane:has(.custom-ckd-container) {
+  width: auto;
+  background-color: var(--bg-color, white);
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-width: 700px;
+  margin-top: -22px;
+  border: 1px solid var(--border-color, #ddd);
+}
+
+
+
+::ng-deep.cdk-overlay-pane:has(.range-input) {
+  max-width: 250px;
+}
+
+.br-top {
+  border-top: 1px solid var(--border-color, #ddd);
+}
+
+.br-right {
+  border-right: 1px solid var(--border-color, #ddd);
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.mat-button,
+.mdc-button {
+  font-family: var(--mdc-list-list-item-label-text-font);
+  line-height: var(--mdc-list-list-item-label-text-line-height);
+  font-size: var(--mdc-list-list-item-label-text-size);
+  font-weight: var(--mdc-list-list-item-label-text-weight);
+  letter-spacing: var(--mdc-list-list-item-label-text-tracking);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.display-hidden {
+  display: none;
+}
+
+.custom-calendar-container {
+  width: 100%;
+  display: block;
+  float: left;
+}
+
+.row-1,
+.row-2 {
+  width: 100%;
+  display: block;
+  float: left;
+}
+
+.row-2 {
+  padding: 0.7rem;
+}
+
+.footer-content {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  text-align: right;
+  justify-content: end;
+  gap: 10px;
+  margin-right: 2rem;
+  text-overflow: ellipsis;
+}
+
+.buttons {
+  margin-right: 1.5rem;
+  display: flex;
+  gap: 10px;
+}
+
+.column-1 {
+  width: 25%;
+  display: block;
+  float: left;
+}
+.column-2 {
+  width: 73%;
+  display: block;
+  float: left;
+}
+
+.without-default-opt {
+  .column-1 {
+    display: none;
+  }
+  .column-2 {
+    width: 100%;
+    display: block;
+    float: left;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer-content {
+    display: block;
+  }
+
+  #range-label-text {
+    margin-right: 1.5rem;
+  }
+
+  .buttons {
+    float: right;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .column-1,
+  .column-2 {
+    width: 100%;
+  }
+}
+
+@media (min-width: 650px) {
+  .column-1 {
+    width: 25%;
+  }
+  .column-2 {
+    width: 74%;
+  }
+}
+
+.without-default-opt {
+  .column-1 {
+    display: none;
+  }
+  .column-2 {
+    width: 100%;
+    display: block;
+    float: left;
+  }
+}
+
+
+::ng-deep .month-picker .mat-calendar-content {
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep .month-picker .mat-calendar-body {
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep.month-picker .mat-calendar-body-cell {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
