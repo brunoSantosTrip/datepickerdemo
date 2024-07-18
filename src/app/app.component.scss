@@ -9,16 +9,17 @@ mat-list-item {
 
 ::ng-deep.cdk-overlay-pane:has(.custom-ckd-container) {
   width: auto;
-  background-color: var(--bg-color, white);
+  background-color: #fff; 
   max-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   max-width: 700px;
   margin-top: -22px;
-  border: 1px solid var(--border-color, #ddd);
+  border: 1px solid #D0D0D0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
 }
-
-
 
 ::ng-deep.cdk-overlay-pane:has(.range-input) {
   max-width: 250px;
@@ -46,9 +47,6 @@ mat-list-item {
   letter-spacing: var(--mdc-list-list-item-label-text-tracking);
 }
 
-.w-full {
-  width: 100%;
-}
 
 .display-hidden {
   display: none;
@@ -152,7 +150,6 @@ mat-list-item {
   }
 }
 
-
 ::ng-deep .month-picker .mat-calendar-content {
   display: flex;
   flex-direction: column;
@@ -167,4 +164,9 @@ mat-list-item {
   display: flex;
   justify-content: flex-start;
   width: 100%;
+}
+
+
+::ng-deep .mat-calendar-period-button {
+  pointer-events: none; /* Disables click on the period button to prevent changing the view */
 }

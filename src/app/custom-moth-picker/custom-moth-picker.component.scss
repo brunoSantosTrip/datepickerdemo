@@ -1,0 +1,34 @@
+.custom-month-picker {
+  width: 200px; /* Adjust the width as necessary */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-select-panel {
+  max-height: 300px; /* Adjust the height as necessary */
+  overflow-y: auto;  /* Enable vertical scrolling */
+  border-radius: 8px; /* Rounded corners for the dropdown */
+}
+
+.mat-option {
+  height: 40px; /* Adjust height for each option */
+}
+
+.d-inline {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.mat-button {
+  text-transform: none; /* Prevent text transformation */
+}

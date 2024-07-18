@@ -1,9 +1,45 @@
 .calendar-container {
-    display: flex;
-  }
+  display: flex;
+}
   
-  .first-view, .second-view {
-    margin: 10px;
-    flex: 1;
+.first-view, .second-view {
+  margin: 10px;
+  flex: 1;
+}
+
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+}
+
+.custom-toggle-group {
+  width: 212px;
+  height: 48px;
+  background-color: #f5f5f5;
+  border-radius: 25px;
+}
+
+.toggle-button {
+  // flex: 1;
+  // padding: 0.5rem 1rem;
+  padding: 0px 4px 0px 4px;
+  border-radius: 25px;
+  font-weight: bold;
+  background-color: #F3F3F3;
+  border: none;
+
+  &.mat-button-toggle-checked {
+    background-color: #FFFFFF;
   }
-  
+
+  &:not(.mat-button-toggle-checked) {
+    border: none !important;
+  }
+
+}
+
+::ng-deep.mat-button-toggle .mat-pseudo-checkbox {
+  display: none;
+}
+

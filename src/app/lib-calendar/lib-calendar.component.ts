@@ -8,13 +8,17 @@ import {
   Input,
   OnInit,
   Renderer2,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { DateRange, MatCalendar, MatDatepickerModule } from '@angular/material/datepicker';
 import { CalendarViewData } from '../model/calendar-view-data';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { CustomMothPickerComponent } from '../custom-moth-picker/custom-moth-picker.component';
+import { SwitchesModule } from '@triparc/nexus';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'lib-calendar',
@@ -22,7 +26,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   imports: [
     MatDatepickerModule,
     MatNativeDateModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    CustomMothPickerComponent,
+    SwitchesModule,
+    MatSlideToggleModule,
+    MatButtonToggleModule,
+    FormsModule
   ],
   templateUrl: './lib-calendar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush, 
@@ -32,24 +41,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 export class LibCalendarComponent implements OnInit, AfterViewInit{
   firstCalendarViewData!: CalendarViewData;
   secondCalendarViewData!: CalendarViewData;
+  isCustomRange: boolean = false;
+  sideBySide: boolean = true;
 
   @Input() selectedDates!: DateRange<Date> | null;
-  // @Input() minDate!: Date;
-  // @Input() maxDate!: Date;
-
-
-  // public selectedDates! = input<DateRange<Date>>();
 
   public minDate = input<Date>();
   public maxDate = input<Date>();
-  public sideBySide = input.required<boolean>();
 
   private isAllowHoverEvent: boolean = false;
+  selectedValue: string = 'dateRange';
 
   @ViewChild('firstCalendarView') firstCalendarView!: MatCalendar<Date>;
   @ViewChild('secondCalendarView') secondCalendarView!: MatCalendar<Date>;
-
-  @ViewChild('singleView') singleView!: MatCalendar<Date>;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -102,9 +106,10 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
   }
 
   onMonthSelected(selectedMonth : any): void {
-    debugger;
     var today = new Date();
-    var dateSelected = selectedMonth;
+
+    const currentDate = new Date();
+    var dateSelected = new Date(currentDate.getFullYear(), selectedMonth, 1);
     var startDate = null;
     var endDate = null;
     if (today <= dateSelected){
@@ -117,8 +122,6 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
     }
   
     this.selectedDates = new DateRange<Date>(startDate, endDate);
-  
-    this.singleView._dragEnded;
 
   }
 
@@ -140,8 +143,25 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
       this.isAllowHoverEvent = false;
       this.selectedDates = new DateRange<Date>(selectedDates.start, date);
     }
+    debugger;
     this.cdref.markForCheck();
   }
+
+  // updateDatemonthSelection(date: Date | null): void {
+  //   const selectedDates = this.selectedDates;
+  //   if (
+  //     !selectedDates ||
+  //     (selectedDates.start && selectedDates.end) ||
+  //     (selectedDates.start && date && selectedDates.start > date)
+  //   ) {
+  //     this.selectedDates = new DateRange<Date>(date, null);
+  //     this.isAllowHoverEvent = true;
+  //   } else {
+  //     this.isAllowHoverEvent = false;
+  //     this.selectedDates = new DateRange<Date>(selectedDates.start, date);
+  //   }
+  //   this.cdref.markForCheck();
+  // }
 
   /**
    * This method handles First calendar prev button event.
@@ -341,5 +361,10 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
    */
   private getFirstDateOfNextMonth(currDate: Date): Date {
     return new Date(currDate.getFullYear(), currDate.getMonth() + 1, 1);
+  }
+  
+  onToggleChanged(): void {
+    this.sideBySide = !this.sideBySide;
+    this.isCustomRange = !this.isCustomRange;
   }
 }

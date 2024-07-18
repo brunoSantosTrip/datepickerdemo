@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill" class="custom-month-picker">
+    <mat-label>{{ currentMonthLabel }}</mat-label>
+    <mat-select #select [formControl]="selectedMonth" (selectionChange)="selectMonth($event.value)">
+        <mat-option *ngFor="let month of months" [value]="month.value">
+        {{ month.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>

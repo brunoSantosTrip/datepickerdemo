@@ -14,15 +14,16 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ISelectDateOption } from './model/select-date-option';
-import {  ButtonsModule, SwitchesModule } from '@triparc/nexus';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { InputsModule, SharedModule, SwitchesModule } from '@triparc/nexus';
+import { FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
-    CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatToolbarModule,
@@ -36,7 +37,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     OverlayModule,
     MatIconModule,
     MatTooltipModule,
-    SwitchesModule
+    SwitchesModule,
+    InputsModule,
+    SharedModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -46,15 +49,20 @@ export class AppComponent {
   title = 'datepickerdemo';
 
   isCustomRange: boolean = false;
-  @Input() inputLabel: string = 'Date Range';
-  @Input() calendarId: string = 'custom-calendar';
-  @Input() selectedDates!: DateRange<Date> | null;
-  @Input() dateFormat: string = 'dd/MM/yyyy';
-  @Input() hideDefaultOptions: boolean = true;
-  @Input() cdkConnectedOverlayOffsetX = 0;
-  @Input() cdkConnectedOverlayOffsetY = 0;
+  selectedDates!: DateRange<Date> | null;
+  dateFormat: string = 'dd/MM/yyyy';
+  hideDefaultOptions: boolean = true;
+  cdkConnectedOverlayOffsetX = 0;
+  cdkConnectedOverlayOffsetY = 0;
 
+  inputLabel: string = 'Date Range';
+  calendarId: string = 'custom-calendar';
   sideBySide: boolean = true;
+  viewLabel: string = 'Date Range';
+
+  formGroup = new FormGroup({
+    datesInput: new FormControl('', [Validators.required])
+  });
 
    // default min date is current date - 10 years.
    @Input() minDate = new Date(
@@ -89,15 +97,8 @@ export class AppComponent {
    * @param input HTMLInputElement
    * @param selectedDates DateRange<Date>
    */
-  updateCustomRange(
-    input: HTMLInputElement,
-    selectedDates: DateRange<Date> | null
-  ): void {
-    this.updateSelectedDates(
-      input,
-      selectedDates?.start ?? new Date(),
-      selectedDates?.end ?? new Date()
-    );
+  updateCustomRange(selectedDates: DateRange<Date> | null): void {
+    this.updateSelectedDates(selectedDates?.start ?? new Date(), selectedDates?.end ?? new Date());
   }
 
   /**
@@ -140,14 +141,16 @@ export class AppComponent {
    * @param startDate Date
    * @param endDate Date
    */
-  private updateSelectedDates(
-    input: HTMLInputElement,
-    startDate: Date,
-    endDate: Date
-  ): void {
+  private updateSelectedDates(startDate: Date, endDate: Date): void {
     this.selectedDates = new DateRange<Date>(startDate, endDate);
-    input.value =
-      this.getDateString(startDate) + ' - ' + this.getDateString(endDate);
+    // input.value =
+    //   this.getDateString(startDate) + ' - ' + this.getDateString(endDate);
+
+    this.formGroup.setValue({
+      datesInput: this.getDateString(startDate) + ' - ' + this.getDateString(endDate)
+    });
+
+
     const selectedDateEventData: SelectedDateEvent = {
       range: this.selectedDates,
       selectedOption: null,
@@ -189,7 +192,8 @@ export class AppComponent {
   onToggleChanged(event: any): void {
     this.sideBySide = event;
     this.isCustomRange = !this.isCustomRange;
-    console.log('onToggleChanged', event);
+    this.viewLabel = event ? "Data Range" : "Month"
   }
   
+ 
 }

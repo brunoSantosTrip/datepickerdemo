@@ -1,5 +1,16 @@
+<div class="toggle-container">
+  <mat-button-toggle-group [(ngModel)]="selectedValue" class="custom-toggle-group" (change)="onToggleChanged()">
+    <mat-button-toggle value="dateRange" class="toggle-button">
+      Date range
+    </mat-button-toggle>
+    <mat-button-toggle value="month" class="toggle-button">
+      Month
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
 <div class="calendar-container">
-  @if (sideBySide()) {
+  @if (sideBySide) {
     <div class="first-view">
       <mat-calendar id="firstCalendarView" #firstCalendarView [startAt]="firstCalendarViewData.startDate"
         [selected]="selectedDates" (selectedChange)="updateDateRangeSelection($event)"
@@ -13,10 +24,6 @@
     </div>
   }
   @else {
-    <div class="single-view">
-      <mat-calendar id="singleView" #singleView
-        [selected]="selectedDates" startView="year" (selectedChange)="updateDateRangeSelection($event)"
-        (monthSelected)="onMonthSelected($event)" [minDate]="minDate" [maxDate]="maxDate"></mat-calendar>
-    </div>
+    <app-custom-moth-picker (monthSelected)="onMonthSelected($event)"></app-custom-moth-picker> 
   }
 </div>
