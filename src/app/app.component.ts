@@ -1,23 +1,18 @@
-import {  ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, Renderer2, signal, ViewChild} from '@angular/core';
+import {  Component, computed, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Renderer2, signal, ViewChild} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { DateRange, MatDatepickerModule } from '@angular/material/datepicker';
-import { DateAdapter, MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
+import { DateRange } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import {  DatePipe } from '@angular/common';
-import { NgDatePickerModule, SelectedDateEvent } from 'ng-material-date-range-picker';
-import { LibCalendarComponent } from './lib-calendar/lib-calendar.component';
+import {  SelectedDateEvent } from 'ng-material-date-range-picker';
 import { CdkConnectedOverlay, OverlayModule } from '@angular/cdk/overlay';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { InputsModule, SharedModule } from '@triparc/nexus';
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DataRangeViewComponent } from './calendar/data-range-view/data-range-view.component';
+import { DataMonthViewComponent } from './calendar/data-month-view/data-month-view.component';
 
 
 @Component({
@@ -27,76 +22,39 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     RouterOutlet,
     ReactiveFormsModule,
     MatButtonModule,
-    MatToolbarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatFormFieldModule,
-    MatInputModule,
     FormsModule,
-    NgDatePickerModule,
-    LibCalendarComponent,
+    DataRangeViewComponent,
     OverlayModule,
-    MatTooltipModule,
     InputsModule,
     SharedModule,
-    MatSlideToggleModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    DataMonthViewComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [
-    DatePipe
-  ]
+  providers: [DatePipe]
 })
 
 export class AppComponent {
   title = 'datepickerdemo';
 
-  isCustomRange: boolean = false;
-  selectedDates!: DateRange<Date> | null;
-  dateFormat: string = 'dd/MM/yyyy';
-  hideDefaultOptions: boolean = true;
-  cdkConnectedOverlayOffsetX = 0;
-  cdkConnectedOverlayOffsetY = 0;
+  isCustomRange = signal<boolean>(false);
+  selectedDates = signal<DateRange<Date> | null>(null);
 
-  calendarId: string = 'custom-calendar';
-  prefixIconName: string = 'search';
+  //maybe model
+  selectedValue: string = 'dateRange';
+  prefixIconName = signal<string>('search');
+  sideBySide = signal<boolean>(true);
+  datesSelected = computed(() => !!this.selectedDates()?.start && !!this.selectedDates()?.end);
 
   formGroup = new FormGroup({
     datesInput: new FormControl('', [Validators.required])
   });
-
-  
-   // default min date is current date - 10 years.
-   @Input() minDate = new Date(
-    new Date().setFullYear(new Date().getFullYear() - 10)
-  );
-
-  // default max date is current date + 10 years.
-  @Input() maxDate = new Date(
-    new Date().setFullYear(new Date().getFullYear() + 10)
-  );
-
-  @Output() onDateSelectionChanged: EventEmitter<SelectedDateEvent>;
-
-  sideBySide : boolean = true;
+ 
   @ViewChild(CdkConnectedOverlay) overlay: CdkConnectedOverlay | undefined;
   
-  selectedValue: string = 'dateRange';
-
   constructor(private el: ElementRef, private renderer: Renderer2) {
-    this.onDateSelectionChanged = new EventEmitter<SelectedDateEvent>();
-  }
-
-  isDateOptionList: boolean = false;
-
-  ngOnInit(): void {
-    this.updateDefaultDatesValues();
-  }
-
-  ngAfterViewInit(): void {
-    this.updateDefaultDatesValues();
   }
 
   /**
@@ -105,16 +63,29 @@ export class AppComponent {
    * @param input HTMLInputElement
    * @param selectedDates DateRange<Date>
    */
-  updateCustomRange(selectedDates: DateRange<Date> | null): void {
-    this.prefixIconName = "date_range";
-    this.updateSelectedDates(selectedDates?.start ?? new Date(), selectedDates?.end ?? new Date());
+  updateSelectedDates(): void {
+    this.prefixIconName.set("date_range");
+    const selectedDates = this.selectedDates();
+    const start = selectedDates?.start ? this.getDateString(selectedDates.start) : '';
+    const end = selectedDates?.end ? this.getDateString(selectedDates.end) : '';
+    if (start && end) {
+      this.formGroup.setValue({
+        datesInput: `${start} - ${end}`
+      });
+    } else {
+      this.formGroup.setValue({
+        datesInput: ''
+      });
+    }
+    
+    this.isCustomRange.set(false);
   }
 
   /**
    * This method toggles the custom date range selection view.
    */
   toggleCustomDateRangeView(): void {
-    this.isCustomRange = !this.isCustomRange;
+    this.isCustomRange.update(isCustomRange => !isCustomRange);
   }
 
   /**
@@ -124,42 +95,10 @@ export class AppComponent {
    */
   clearSelection(event: MouseEvent): void {
     event.stopImmediatePropagation();
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    this.minDate = new Date(currentDate.setFullYear(year - 10));
-    this.maxDate = new Date(currentDate.setFullYear(year + 10));
-    this.selectedDates = null;
-
-    const dateInputField =
-      this.el.nativeElement.querySelector('#date-input-field');
-    if (dateInputField) {
-      dateInputField.value = '';
-    }
-    const selectedDateEventData: SelectedDateEvent = {
-      range: null,
-      selectedOption: null,
-    };
-    this.onDateSelectionChanged.emit(selectedDateEventData);
-  }
-
-  /**
-   * This method updates dates on selection.
-   *
-   * @param input HTMLInputElement
-   * @param startDate Date
-   * @param endDate Date
-   */
-  private updateSelectedDates(startDate: Date, endDate: Date): void {
-    this.selectedDates = new DateRange<Date>(startDate, endDate);
+    this.selectedDates.set(null);
     this.formGroup.setValue({
-      datesInput: this.getDateString(startDate) + ' - ' + this.getDateString(endDate)
+      datesInput: ''
     });
-    const selectedDateEventData: SelectedDateEvent = {
-      range: this.selectedDates,
-      selectedOption: null,
-    };
-    this.onDateSelectionChanged.emit(selectedDateEventData);
-    // this.cdref.markForCheck();
   }
 
   /**
@@ -170,25 +109,37 @@ export class AppComponent {
    */
   private getDateString(date: Date): string {
     const datePipe = new DatePipe('en');
-    return datePipe.transform(date, this.dateFormat) ?? '';
+    return datePipe.transform(date, 'dd/MM/yyyy') ?? '';
   }
 
-  /**
-   * This method update the default date values on init.
-   */
-  private updateDefaultDatesValues(): void {
-    const input: HTMLInputElement =
-      this.el.nativeElement.querySelector('#date-input-field');
-    if (
-      this.selectedDates &&
-      this.selectedDates.start &&
-      this.selectedDates.end
-    ) {
-      input.value = this.getDateString(this.selectedDates.start) + ' - ' + this.getDateString(this.selectedDates.end);
+  cleanDates(): void{
+    this.prefixIconName.set('search');
+    this.isCustomRange.set(false);
+    this.formGroup.patchValue({
+      datesInput: ''
+    });
+  }
+
+  onToggleChanged(): void {
+    this.sideBySide.update(sideBySide => !sideBySide);
+    this.setOverlayClass();
+  }
+
+  setOverlayClass() {
+    if (this.overlay && this.overlay.overlayRef) {
+      const overlayPane = this.overlay.overlayRef.overlayElement;
+      if (this.sideBySide()) {
+        this.renderer.addClass(overlayPane, 'side-by-side');
+        this.renderer.removeClass(overlayPane, 'one-side');
+      } else {
+        this.renderer.addClass(overlayPane, 'one-side');
+        this.renderer.removeClass(overlayPane, 'side-by-side');
+      }
     }
   }
 
   onSelectedDatesChange(dates: DateRange<Date> | null): void {
+    this.selectedDates.set(dates);
     if (dates) {
       if(dates.start && dates.end) {        
         this.formGroup.patchValue({
@@ -207,29 +158,26 @@ export class AppComponent {
     }
   }
 
-  cleanDates(): void{
-    this.prefixIconName = "search";
-    this.isCustomRange = false;
+  onMonthSelected(selectedMonth : any): void {
+    var today = new Date();
+
+    const currentDate = new Date();
+    var dateSelected = new Date(currentDate.getFullYear(), selectedMonth, 1);
+    var startDate = null;
+    var endDate = null;
+    if (today <= dateSelected){
+      startDate = new Date(dateSelected.getFullYear(), dateSelected.getMonth(), 1);
+      endDate = new Date(dateSelected.getFullYear(), dateSelected.getMonth() + 1, 0);
+    }
+    else{
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
+    this.selectedDates.set(new DateRange<Date>(startDate, endDate));
+
     this.formGroup.patchValue({
-      datesInput: ''
+      datesInput: `${this.getDateString(startDate)} - ${this.getDateString(endDate)}`
     });
   }
 
-  onToggleChanged(): void {
-    this.sideBySide = !this.sideBySide;
-    this.setOverlayClass();
-  }
-
-  setOverlayClass() {
-    if (this.overlay && this.overlay.overlayRef) {
-      const overlayPane = this.overlay.overlayRef.overlayElement;
-      if (this.sideBySide) {
-        this.renderer.addClass(overlayPane, 'side-by-side');
-        this.renderer.removeClass(overlayPane, 'one-side');
-      } else {
-        this.renderer.addClass(overlayPane, 'one-side');
-        this.renderer.removeClass(overlayPane, 'side-by-side');
-      }
-    }
-  }
 }

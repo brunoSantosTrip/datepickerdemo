@@ -207,3 +207,7 @@ mat-list-item {
     width: 400px;
   }
 }
+
+::ng-deep.mat-button-toggle .mat-pseudo-checkbox {
+  display: none;
+}
