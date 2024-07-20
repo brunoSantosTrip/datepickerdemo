@@ -1,7 +1,9 @@
 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Adelle+Sans:wght@400;700&display=swap" rel="stylesheet">
 
 <div [formGroup]="formGroup">
-  <nex-input id="date-input-field" formControlName="datesInput" nexPrefixIconName="search" nexLabel="Dates" nexPlaceholder="Add Dates" (nexOnFocus)="toggleCustomDateRangeView()"/>    
+  <nex-input id="date-input-field"  class="custom-form-field" formControlName="datesInput" [nexPrefixIconName]="prefixIconName" nexLabel="Dates" nexPlaceholder="Add Dates" (nexOnFocus)="toggleCustomDateRangeView()"/>    
 </div>
 
 <div class="date-picker-main" cdkOverlayOrigin #trigger> 
@@ -10,23 +12,30 @@
     [cdkConnectedOverlayOffsetX]="cdkConnectedOverlayOffsetX" [cdkConnectedOverlayOffsetY]="cdkConnectedOverlayOffsetY"
     (backdropClick)="toggleCustomDateRangeView()">
     
-    <div class="custom-ckd-container custom-calendar-container" [class]="{'without-default-opt':hideDefaultOptions}">
+    <div class="custom-ckd-container custom-calendar-container">
       <div class="row-1">
         <div class="mt-3 column-3">
-          <lib-calendar [selectedDates]="selectedDates" #calendar [minDate]="minDate"
-            [maxDate]="maxDate"></lib-calendar>
-            <app-custom-moth-picker></app-custom-moth-picker> 
+
+          <div class="toggle-container">
+            <mat-button-toggle-group [(ngModel)]="selectedValue" class="custom-toggle-group" (change)="onToggleChanged()">
+              <mat-button-toggle value="dateRange" class="toggle-button">
+                Date range
+              </mat-button-toggle>
+              <mat-button-toggle value="month" class="toggle-button">
+                Month
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <lib-calendar (selectedDatesChange)="onSelectedDatesChange($event)" [selectedDates]="selectedDates" #calendar [sideBySide]="sideBySide" [minDate]="minDate" [maxDate]="maxDate"></lib-calendar>
+
         </div>
       </div>
       <div class="row-2">
         <div class="text-end my-2 w-full">
           <div class="footer-content">
-            <!-- <span id="range-label-text">
-              {{calendar?.selectedDates?.start | date: 'dd/MM/yyyy'}}
-              <span *ngIf="calendar?.selectedDates?.end"> - {{calendar.selectedDates?.end | date: 'dd/MM/yyyy'}} </span>
-            </span> -->
             <div class="d-inline buttons">
-              <button mat-button mat-raised-button (click)="isCustomRange=false;">Cancel</button>
+              <button mat-button mat-raised-button (click)="cleanDates()">Cancel</button>
               <button mat-button mat-raised-button color="primary" [disabled]="!(calendar?.selectedDates?.start && calendar?.selectedDates?.end)"
                 (click)="updateCustomRange(calendar.selectedDates); isCustomRange=false;">OK</button>
             </div>

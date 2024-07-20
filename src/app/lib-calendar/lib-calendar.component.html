@@ -1,5 +1,5 @@
-<div class="toggle-container">
-  <mat-button-toggle-group [(ngModel)]="selectedValue" class="custom-toggle-group" (change)="onToggleChanged()">
+<!-- <div class="toggle-container">
+  <mat-button-toggle-group class="custom-toggle-group" (change)="onToggleChanged()">
     <mat-button-toggle value="dateRange" class="toggle-button">
       Date range
     </mat-button-toggle>
@@ -7,23 +7,25 @@
       Month
     </mat-button-toggle>
   </mat-button-toggle-group>
-</div>
+</div> -->
 
-<div class="calendar-container">
-  @if (sideBySide) {
-    <div class="first-view">
-      <mat-calendar id="firstCalendarView" #firstCalendarView [startAt]="firstCalendarViewData.startDate"
-        [selected]="selectedDates" (selectedChange)="updateDateRangeSelection($event)"
-        (monthSelected)="monthSelected($event)" [minDate]="minDate" [maxDate]="maxDate"></mat-calendar>
-    </div>
-    <div class="second-view">
-      <mat-calendar id="secondCalendarView" #secondCalendarView [startAt]="secondCalendarViewData.startDate"
-        [minDate]="secondCalendarViewData.minDate" [maxDate]="maxDate" [selected]="selectedDates"
-        (selectedChange)="updateDateRangeSelection($event)"
-        (monthSelected)="secondViewMonthSelected($event)"></mat-calendar>
+
+  @if (sideBySide()) {
+    <div class="calendar-container">
+      <div class="first-view">
+        <mat-calendar id="firstCalendarView" #firstCalendarView [startAt]="firstCalendarViewData.startDate"
+          [selected]="selectedDates" (selectedChange)="updateDateRangeSelection($event)"
+          (monthSelected)="monthSelected($event)" [minDate]="minDate" [maxDate]="maxDate"></mat-calendar>
+      </div>
+      <div class="second-view">
+        <mat-calendar id="secondCalendarView" #secondCalendarView [startAt]="secondCalendarViewData.startDate"
+          [minDate]="secondCalendarViewData.minDate" [maxDate]="maxDate" [selected]="selectedDates"
+          (selectedChange)="updateDateRangeSelection($event)"
+          (monthSelected)="secondViewMonthSelected($event)"></mat-calendar>
+      </div>
     </div>
   }
   @else {
     <app-custom-moth-picker (monthSelected)="onMonthSelected($event)"></app-custom-moth-picker> 
   }
-</div>
+

@@ -1,12 +1,12 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   input,
   Input,
   OnInit,
+  output,
   Renderer2,
   ViewChild,
 } from '@angular/core';
@@ -15,9 +15,6 @@ import { CalendarViewData } from '../model/calendar-view-data';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CustomMothPickerComponent } from '../custom-moth-picker/custom-moth-picker.component';
-import { SwitchesModule } from '@triparc/nexus';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -28,9 +25,7 @@ import { FormsModule } from '@angular/forms';
     MatNativeDateModule,
     MatFormFieldModule,
     CustomMothPickerComponent,
-    SwitchesModule,
-    MatSlideToggleModule,
-    MatButtonToggleModule,
+    // MatSlideToggleModule,
     FormsModule
   ],
   templateUrl: './lib-calendar.component.html',
@@ -42,21 +37,23 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
   firstCalendarViewData!: CalendarViewData;
   secondCalendarViewData!: CalendarViewData;
   isCustomRange: boolean = false;
-  sideBySide: boolean = true;
 
   @Input() selectedDates!: DateRange<Date> | null;
+ 
+  selectedDatesChange = output<DateRange<Date> | null>();
 
+  public sideBySide = input.required<boolean>();
   public minDate = input<Date>();
   public maxDate = input<Date>();
 
   private isAllowHoverEvent: boolean = false;
-  selectedValue: string = 'dateRange';
+  // selectedValue: string = 'dateRange';
 
   @ViewChild('firstCalendarView') firstCalendarView!: MatCalendar<Date>;
   @ViewChild('secondCalendarView') secondCalendarView!: MatCalendar<Date>;
 
   constructor(
-    private cdref: ChangeDetectorRef,
+    // private cdref: ChangeDetectorRef,
     private el: ElementRef,
     private renderer: Renderer2
   ) {}
@@ -122,7 +119,7 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
     }
   
     this.selectedDates = new DateRange<Date>(startDate, endDate);
-
+    this.selectedDatesChange.emit(this.selectedDates);
   }
 
   /**
@@ -143,8 +140,8 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
       this.isAllowHoverEvent = false;
       this.selectedDates = new DateRange<Date>(selectedDates.start, date);
     }
-    debugger;
-    this.cdref.markForCheck();
+    // this.cdref.markForCheck();
+    this.selectedDatesChange.emit(this.selectedDates);
   }
 
   // updateDatemonthSelection(date: Date | null): void {
@@ -173,7 +170,7 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
       const date: Date = new Date(leftDateCalender['_clampedActiveDate']);
       classRef.secondCalendarView.minDate =
         classRef.getFirstDateOfNextMonth(date);
-      classRef.cdref.markForCheck();
+      // classRef.cdref.markForCheck();
     }
     classRef.attachHoverEventOnFirstViewDates();
   }
@@ -205,7 +202,7 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
       classRef.secondCalendarView.minDate = nextMonthDate;
       classRef.secondCalendarView._goToDateInView(nextMonthDate, 'month');
       classRef.removeDefaultFocus(classRef);
-      classRef.cdref.markForCheck();
+      // classRef.cdref.markForCheck();
     }
     setTimeout(() => {
       classRef.attachHoverEventOnFirstViewDates();
@@ -363,8 +360,8 @@ export class LibCalendarComponent implements OnInit, AfterViewInit{
     return new Date(currDate.getFullYear(), currDate.getMonth() + 1, 1);
   }
   
-  onToggleChanged(): void {
-    this.sideBySide = !this.sideBySide;
-    this.isCustomRange = !this.isCustomRange;
-  }
+  // onToggleChanged(): void {
+  //   this.sideBySide = !this.sideBySide;
+  //   this.isCustomRange = !this.isCustomRange;
+  // }
 }

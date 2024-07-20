@@ -1,3 +1,5 @@
+
+
 /*Disable Backdrop css*/
 ::ng-deep.cdk-overlay-dark-backdrop {
   background: none;
@@ -8,7 +10,6 @@ mat-list-item {
 }
 
 ::ng-deep.cdk-overlay-pane:has(.custom-ckd-container) {
-  width: auto;
   background-color: #fff; 
   max-height: 100vh;
   overflow-y: auto;
@@ -19,11 +20,21 @@ mat-list-item {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
+
+  &.one-side {
+    width: 400px;
+  }
+
+  &.side-by-side {
+    width: 1000px;
+  }
 }
 
-::ng-deep.cdk-overlay-pane:has(.range-input) {
-  max-width: 250px;
+::ng-deep .row-2 {
+  flex: 0 0 auto;
+  margin-top: auto;
 }
+
 
 .br-top {
   border-top: 1px solid var(--border-color, #ddd);
@@ -139,17 +150,6 @@ mat-list-item {
   }
 }
 
-.without-default-opt {
-  .column-1 {
-    display: none;
-  }
-  .column-2 {
-    width: 100%;
-    display: block;
-    float: left;
-  }
-}
-
 ::ng-deep .month-picker .mat-calendar-content {
   display: flex;
   flex-direction: column;
@@ -168,5 +168,42 @@ mat-list-item {
 
 
 ::ng-deep .mat-calendar-period-button {
-  pointer-events: none; /* Disables click on the period button to prevent changing the view */
+  pointer-events: none;
+}
+
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+}
+
+.custom-toggle-group {
+  width: 212px;
+  height: 48px;
+  background-color: #f5f5f5;
+  border-radius: 25px;
+}
+
+.toggle-button {
+  font-family: 'Adelle Sans', sans-serif;
+  padding: 0px 4px 0px 4px;
+  border-radius: 25px;
+  font-weight: bold;
+  background-color: #F3F3F3;
+  border: none;
+
+  &.mat-button-toggle-checked {
+    background-color: #FFFFFF;
+  }
+
+  &:not(.mat-button-toggle-checked) {
+    border: none !important;
+  }
+
+}
+
+::ng-deep .custom-form-field {
+  .mdc-text-field {
+    width: 400px;
+  }
 }

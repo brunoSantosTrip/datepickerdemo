@@ -1,34 +1,28 @@
-.custom-month-picker {
-  width: 200px; /* Adjust the width as necessary */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+::ng-deep .mdc-list-item__end .ng-star-inserted {
+    display: none !important;
 }
 
-.mat-form-field {
-  width: 100%;
+::ng-deep .mdc-list-item {
+    font-family: 'Fira Sans', sans-serif;
 }
 
-.mat-select-panel {
-  max-height: 300px; /* Adjust the height as necessary */
-  overflow-y: auto;  /* Enable vertical scrolling */
-  border-radius: 8px; /* Rounded corners for the dropdown */
+
+
+.date-container {
+    font-family: 'Adelle Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    padding-top: 20px;
+}
+  
+.month {
+    font-size: 14px; 
+    font-weight: bold;
 }
 
-.mat-option {
-  height: 40px; /* Adjust height for each option */
-}
-
-.d-inline {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-
-.buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.mat-button {
-  text-transform: none; /* Prevent text transformation */
+.year {
+    font-size: 14px;
+    color: #4E4E4E;
 }

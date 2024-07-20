@@ -1,23 +1,24 @@
-import {  ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, signal} from '@angular/core';
+import {  ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, Renderer2, signal, ViewChild} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DateRange, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CommonModule, DatePipe } from '@angular/common';
+import {  DatePipe } from '@angular/common';
 import { NgDatePickerModule, SelectedDateEvent } from 'ng-material-date-range-picker';
 import { LibCalendarComponent } from './lib-calendar/lib-calendar.component';
-import { OverlayModule } from '@angular/cdk/overlay';
-import { MatIconModule } from '@angular/material/icon';
+import { CdkConnectedOverlay, OverlayModule } from '@angular/cdk/overlay';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ISelectDateOption } from './model/select-date-option';
-import { InputsModule, SharedModule, SwitchesModule } from '@triparc/nexus';
+import { InputsModule, SharedModule } from '@triparc/nexus';
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 
 @Component({
   selector: 'app-root',
@@ -35,16 +36,20 @@ import { Validators } from '@angular/forms';
     NgDatePickerModule,
     LibCalendarComponent,
     OverlayModule,
-    MatIconModule,
     MatTooltipModule,
-    SwitchesModule,
     InputsModule,
-    SharedModule
+    SharedModule,
+    MatSlideToggleModule,
+    MatButtonToggleModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    DatePipe
+  ]
 })
+
 export class AppComponent {
   title = 'datepickerdemo';
 
@@ -55,15 +60,14 @@ export class AppComponent {
   cdkConnectedOverlayOffsetX = 0;
   cdkConnectedOverlayOffsetY = 0;
 
-  inputLabel: string = 'Date Range';
   calendarId: string = 'custom-calendar';
-  sideBySide: boolean = true;
-  viewLabel: string = 'Date Range';
+  prefixIconName: string = 'search';
 
   formGroup = new FormGroup({
     datesInput: new FormControl('', [Validators.required])
   });
 
+  
    // default min date is current date - 10 years.
    @Input() minDate = new Date(
     new Date().setFullYear(new Date().getFullYear() - 10)
@@ -76,11 +80,15 @@ export class AppComponent {
 
   @Output() onDateSelectionChanged: EventEmitter<SelectedDateEvent>;
 
-  constructor(private cdref: ChangeDetectorRef, private el: ElementRef) {
+  sideBySide : boolean = true;
+  @ViewChild(CdkConnectedOverlay) overlay: CdkConnectedOverlay | undefined;
+  
+  selectedValue: string = 'dateRange';
+
+  constructor(private el: ElementRef, private renderer: Renderer2) {
     this.onDateSelectionChanged = new EventEmitter<SelectedDateEvent>();
   }
 
-  private _dateDropDownOptions: ISelectDateOption[] = [];
   isDateOptionList: boolean = false;
 
   ngOnInit(): void {
@@ -98,6 +106,7 @@ export class AppComponent {
    * @param selectedDates DateRange<Date>
    */
   updateCustomRange(selectedDates: DateRange<Date> | null): void {
+    this.prefixIconName = "date_range";
     this.updateSelectedDates(selectedDates?.start ?? new Date(), selectedDates?.end ?? new Date());
   }
 
@@ -126,7 +135,6 @@ export class AppComponent {
     if (dateInputField) {
       dateInputField.value = '';
     }
-    this.cdref.markForCheck();
     const selectedDateEventData: SelectedDateEvent = {
       range: null,
       selectedOption: null,
@@ -143,20 +151,15 @@ export class AppComponent {
    */
   private updateSelectedDates(startDate: Date, endDate: Date): void {
     this.selectedDates = new DateRange<Date>(startDate, endDate);
-    // input.value =
-    //   this.getDateString(startDate) + ' - ' + this.getDateString(endDate);
-
     this.formGroup.setValue({
       datesInput: this.getDateString(startDate) + ' - ' + this.getDateString(endDate)
     });
-
-
     const selectedDateEventData: SelectedDateEvent = {
       range: this.selectedDates,
       selectedOption: null,
     };
     this.onDateSelectionChanged.emit(selectedDateEventData);
-    this.cdref.markForCheck();
+    // this.cdref.markForCheck();
   }
 
   /**
@@ -181,19 +184,52 @@ export class AppComponent {
       this.selectedDates.start &&
       this.selectedDates.end
     ) {
-      input.value =
-        this.getDateString(this.selectedDates.start) +
-        ' - ' +
-        this.getDateString(this.selectedDates.end);
+      input.value = this.getDateString(this.selectedDates.start) + ' - ' + this.getDateString(this.selectedDates.end);
     }
-    this.cdref.detectChanges();
   }
 
-  onToggleChanged(event: any): void {
-    this.sideBySide = event;
-    this.isCustomRange = !this.isCustomRange;
-    this.viewLabel = event ? "Data Range" : "Month"
+  onSelectedDatesChange(dates: DateRange<Date> | null): void {
+    if (dates) {
+      if(dates.start && dates.end) {        
+        this.formGroup.patchValue({
+          datesInput: `${this.getDateString(dates.start)} - ${this.getDateString(dates.end)}`
+        });
+      }
+      else if(dates.start){
+        this.formGroup.patchValue({
+          datesInput: `${this.getDateString(dates.start)}`
+        });
+      }
+    } else {
+      this.formGroup.patchValue({
+        datesInput: ''
+      });
+    }
   }
-  
- 
+
+  cleanDates(): void{
+    this.prefixIconName = "search";
+    this.isCustomRange = false;
+    this.formGroup.patchValue({
+      datesInput: ''
+    });
+  }
+
+  onToggleChanged(): void {
+    this.sideBySide = !this.sideBySide;
+    this.setOverlayClass();
+  }
+
+  setOverlayClass() {
+    if (this.overlay && this.overlay.overlayRef) {
+      const overlayPane = this.overlay.overlayRef.overlayElement;
+      if (this.sideBySide) {
+        this.renderer.addClass(overlayPane, 'side-by-side');
+        this.renderer.removeClass(overlayPane, 'one-side');
+      } else {
+        this.renderer.addClass(overlayPane, 'one-side');
+        this.renderer.removeClass(overlayPane, 'side-by-side');
+      }
+    }
+  }
 }
