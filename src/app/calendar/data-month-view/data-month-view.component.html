@@ -1,0 +1,20 @@
+<div class="date-container">
+    <span class="month">{{ currentMonth() }}</span>
+    <span class="year">{{ currentYear() }}</span>
+</div>
+<hr>
+<mat-selection-list #listMonths (selectionChange)="selectMonth($event)" [multiple]="false">
+  @for (month of months(); track month) {
+    <mat-list-option [value]="month">
+      @if(isSelectedMonth(month)){
+        <mat-icon class="tick-mark">check</mat-icon>
+      }
+      <div class="list-month">
+        {{month.name}}
+      </div>
+     
+    </mat-list-option>
+  }
+</mat-selection-list>
+
+

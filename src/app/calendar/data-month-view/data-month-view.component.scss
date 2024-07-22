@@ -1,0 +1,32 @@
+::ng-deep .mdc-list-item__end .ng-star-inserted {
+  display: none !important;
+}
+
+.tick-mark {
+  margin-left: auto;
+  padding-top: 5px;
+}
+
+.date-container {
+    font-family: 'Adelle Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    padding-top: 20px;
+}
+  
+.month {
+    font-size: 14px; 
+    font-weight: bold;
+}
+
+.year {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 14px;
+    color: #4E4E4E;
+}
+
+.list-month {
+  font-family: 'Fira Sans', sans-serif;
+}
