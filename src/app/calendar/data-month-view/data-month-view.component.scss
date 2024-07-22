@@ -2,10 +2,6 @@
   display: none !important;
 }
 
-.tick-mark {
-  margin-left: auto;
-  padding-top: 5px;
-}
 
 .date-container {
     font-family: 'Adelle Sans', sans-serif;
@@ -29,4 +25,11 @@
 
 .list-month {
   font-family: 'Fira Sans', sans-serif;
+  display: flex;
+  align-items: center;
+
+  .tick-mark {
+    padding-top: 5px;
+  }
+  
 }

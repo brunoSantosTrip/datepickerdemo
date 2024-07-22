@@ -108,16 +108,16 @@ mat-list-item {
   float: left;
 }
 
-.without-default-opt {
-  .column-1 {
-    display: none;
-  }
-  .column-2 {
-    width: 100%;
-    display: block;
-    float: left;
-  }
-}
+// .without-default-opt {
+//   .column-1 {
+//     display: none;
+//   }
+//   .column-2 {
+//     width: 100%;
+//     display: block;
+//     float: left;
+//   }
+// }
 
 @media (max-width: 400px) {
   .footer-content {

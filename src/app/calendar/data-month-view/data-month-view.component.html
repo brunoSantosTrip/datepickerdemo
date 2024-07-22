@@ -5,15 +5,14 @@
 <hr>
 <mat-selection-list #listMonths (selectionChange)="selectMonth($event)" [multiple]="false">
   @for (month of months(); track month) {
-    <mat-list-option [value]="month">
-      @if(isSelectedMonth(month)){
-        <mat-icon class="tick-mark">check</mat-icon>
-      }
-      <div class="list-month">
+    <div class="list-month">
+      <mat-list-option [value]="month">
+        @if(isSelectedMonth(month)){
+          <mat-icon class="tick-mark">check</mat-icon>
+        }
         {{month.name}}
-      </div>
-     
-    </mat-list-option>
+      </mat-list-option>
+    </div>
   }
 </mat-selection-list>
 
